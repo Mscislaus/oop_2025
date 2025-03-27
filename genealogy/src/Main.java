@@ -19,6 +19,19 @@ public class Main {
                 LocalDate.of(2012, 8, 7)
         ));
 
+        System.out.println(personList.get(0).adopt(personList.get(1)));
+        System.out.println(personList.get(0).adopt(personList.get(1)));
+        System.out.println(personList.get(0).adopt(personList.get(0)));
+        System.out.println(personList.get(0).adopt(personList.get(2)));
+
         System.out.println(personList.size());
+
+        for (Person p : personList) {
+            System.out.println(p);
+        }
+
+        System.out.println();
+        System.out.println(personList.get(0).getYoungestChild());
+        System.out.println(personList.get(1).getYoungestChild());
     }
 }
