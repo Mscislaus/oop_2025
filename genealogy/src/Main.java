@@ -18,11 +18,16 @@ public class Main {
                 "Aleksandra", "Kowalska",
                 LocalDate.of(2012, 8, 7)
         ));
+        personList.add(new Person(
+                "Adam", "Kowalski",
+                LocalDate.of(2011, 4, 14)
+        ));
 
         System.out.println(personList.get(0).adopt(personList.get(1)));
         System.out.println(personList.get(0).adopt(personList.get(1)));
         System.out.println(personList.get(0).adopt(personList.get(0)));
         System.out.println(personList.get(0).adopt(personList.get(2)));
+        personList.get(0).adopt(personList.get(3));
 
         System.out.println(personList.size());
 
@@ -33,5 +38,22 @@ public class Main {
         System.out.println();
         System.out.println(personList.get(0).getYoungestChild());
         System.out.println(personList.get(1).getYoungestChild());
+
+        System.out.println();
+        System.out.println(personList.get(0).getChildren());
+
+        System.out.println();
+        System.out.println("Family");
+        Family family = new Family();
+        family.add(personList.get(0));
+        family.add(personList.get(1), personList.get(2), personList.get(3));
+        personList.add(new Person(
+                "Bartek", "Kowalski",
+                LocalDate.of(2009, 1, 1)
+        ));
+
+        System.out.println(family.get("Andrzej Kowalski"));
+        System.out.println(family.get("Bartek Kowalski"));
+        System.out.println(family.get("Not exist"));
     }
 }
