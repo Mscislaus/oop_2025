@@ -1,19 +1,64 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoField;
+import java.util.*;
 
 public class Person implements Comparable<Person> {
     private final String name, surname;
     private final LocalDate birth;
+    private final LocalDate death;
     private final Set<Person> children;
 
-    public Person(String name, String surname, LocalDate birth) {
+    public Person(String name, String surname, LocalDate birth, LocalDate death) {
         this.name = name;
         this.surname = surname;
         this.birth = birth;
+        this.death = death;
         this.children = new HashSet<>();
+    }
+
+    public static Person fromCsvLine(String csvLine) {
+        String[] elements = csvLine.split(",",-1);
+        String[] fullName = elements[0].split(" ", 2);
+        LocalDate birth = LocalDate.parse(elements[1], DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+        DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+                .appendValue(ChronoField.DAY_OF_MONTH, 2)
+                .appendLiteral(".")
+                .appendValue(ChronoField.MONTH_OF_YEAR, 2)
+                .appendLiteral(".")
+                .appendValue(ChronoField.YEAR, 4)
+                .toFormatter();
+        LocalDate death;
+        try {
+            death = LocalDate.parse(elements[2], formatter);
+        } catch (DateTimeParseException e) {
+            death = null;
+        }
+        System.out.println(elements.length);
+        for (String e: elements) {
+            System.out.println(e);
+        }
+        return new Person(fullName[0], fullName[1], birth, death);
+    }
+
+    public static List<Person> fromCsv(String csvFileName) {
+        List<Person> personList = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(csvFileName))) {
+            br.readLine();
+            String line;
+            while ((line = br.readLine()) != null) {
+                Person readPerson = fromCsvLine(line);
+                personList.add(readPerson);
+            }
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
+        return personList;
     }
 
     public boolean adopt(Person p) {
@@ -28,7 +73,7 @@ public class Person implements Comparable<Person> {
             return null;
 
         return Collections.max(children);
-/*            Person youngest = null;
+        /*Person youngest = null;
             for (Person child : children) {
                 if (youngest == null || child.birth.isAfter(youngest.birth)) {
                     youngest = child;
@@ -47,6 +92,7 @@ public class Person implements Comparable<Person> {
                 "name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 ", birth=" + birth +
+                ", death=" + death +
                 ", children=" + children +
                 '}';
     }
