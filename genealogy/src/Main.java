@@ -4,16 +4,18 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        Person p1 = Person.fromCsvLine("Marek Kowalski,15.05.1899,25.06.1957,,");
-        System.out.println(p1);
-
-        Person p2 = Person.fromCsvLine("Jan Kowalski,05.03.1992,,,Kacper Kowalski");
-        System.out.println(p2);
-
-        List<Person> personList = Person.fromCsv("family.csv");
-        System.out.println(personList.size());
-        for (Person p: personList) {
-            System.out.println(p);
+        try {
+            List<Person> personList = Person.fromCsv("family.csv");
+            System.out.println(personList.size());
+            for (Person p : personList) {
+                System.out.println(p);
+                System.out.println("Dzieci:");
+                for (Person child: p.getChildren()) {
+                    System.out.println("\t"+child.getFullName());
+                }
+            }
+        } catch (AmbiguousPersonException e) {
+            System.err.println(e.getMessage());
         }
     }
 }

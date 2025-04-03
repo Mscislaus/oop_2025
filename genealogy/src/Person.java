@@ -14,7 +14,7 @@ public class Person implements Comparable<Person> {
     private final LocalDate death;
     private final Set<Person> children;
 
-    public Person(String name, String surname, LocalDate birth, LocalDate death) {
+    public Person(String name, String surname, LocalDate birth, LocalDate death) throws NegativeLifespanException {
         this.name = name;
         this.surname = surname;
         this.birth = birth;
@@ -22,7 +22,7 @@ public class Person implements Comparable<Person> {
         this.children = new HashSet<>();
     }
 
-    public static Person fromCsvLine(String csvLine) {
+    public static Person fromCsvLine(String csvLine) throws NegativeLifespanException {
         String[] elements = csvLine.split(",",-1);
         String[] fullName = elements[0].split(" ", 2);
         LocalDate birth = LocalDate.parse(elements[1], DateTimeFormatter.ofPattern("dd.MM.yyyy"));
@@ -46,19 +46,35 @@ public class Person implements Comparable<Person> {
         return new Person(fullName[0], fullName[1], birth, death);
     }
 
-    public static List<Person> fromCsv(String csvFileName) {
-        List<Person> personList = new ArrayList<>();
+    public static List<Person> fromCsv(String csvFileName) throws AmbiguousPersonException {
+        Map<String, Person> family = new HashMap<>();
         try (BufferedReader br = new BufferedReader(new FileReader(csvFileName))) {
             br.readLine();
             String line;
             while ((line = br.readLine()) != null) {
-                Person readPerson = fromCsvLine(line);
-                personList.add(readPerson);
+                try {
+                    Person readPerson = fromCsvLine(line);
+                    if (family.containsKey(readPerson.getFullName())) {
+                        throw new AmbiguousPersonException(readPerson.getFullName());
+                    }
+                    family.put(readPerson.getFullName(), readPerson);
+                    String[] elements = line.split(",", -1);
+                    Person parentA = family.get(elements[3]);
+                    Person parentB = family.get(elements[3]);
+                    if (parentA != null) {
+                        parentA.adopt(readPerson);
+                    }
+                    if (parentB != null) {
+                        parentB.adopt(readPerson);
+                    }
+                } catch (NegativeLifespanException e) {
+                    System.err.println(e.getMessage());
+                }
             }
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
-        return personList;
+        return family.values().stream().toList();
     }
 
     public boolean adopt(Person p) {
