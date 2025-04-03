@@ -3,7 +3,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Main {
-    public static void main(String[] args) {
+
+}
+
+/*public static void main(String[] args) {
         List<Person> personList = new LinkedList<>();
         personList.add(new Person(
                 "Andrzej", "Kowalski",
@@ -55,5 +58,4 @@ public class Main {
         System.out.println(family.get("Andrzej Kowalski"));
         System.out.println(family.get("Bartek Kowalski"));
         System.out.println(family.get("Not exist"));
-    }
-}
+    }*/
