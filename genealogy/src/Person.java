@@ -4,7 +4,11 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class Person implements Comparable<Person>, Serializable {
     private final String name, surname;
@@ -158,5 +162,65 @@ public class Person implements Comparable<Person>, Serializable {
 
     public String getFullName() {
         return name + ' ' + surname;
+    }
+
+    public String getUMLObject() {
+        return "object \"" + getFullName() + "\" {\n" +
+                " birth = " + birth + "\n" +
+                (death == null ? "" : "death = " + death + "\n") +
+                "}\n";
+    }
+
+    public static String umlFromList(List<Person> personList, Function<String, String> postProcess, Predicate<Person> condition) {
+        StringBuilder umlData = new StringBuilder();
+        for (Person p : personList) {
+            String umlPerson = p.getUMLObject();
+            if (condition.test(p)) {
+                umlPerson = postProcess.apply(umlPerson);
+            }
+            umlData.append(umlPerson);
+        }
+        for (Person p : personList) {
+            for (Person child : p.getChildren()) {
+                umlData.append("\"").append(child.getFullName()).append("\"")
+                        .append(" --> ")
+                        .append("\"").append(p.getFullName()).append("\"")
+                        .append("\n");
+            }
+        }
+        return umlData.toString();
+    }
+
+    public static List<Person> selectNames(List<Person> from, String name) {
+        /*List<Person> result = new ArrayList<>();
+        for (Person p : from) {
+            if (p.getFullName().toLowerCase().contains(name.toLowerCase())){
+                result.add(p);
+            }
+        }
+        return result;*/
+        return from.stream().filter(p -> p.getFullName().toLowerCase().contains(name.toLowerCase())).toList();
+    }
+
+    public static List<Person> sortByBirth(List<Person> from) {
+        return from.stream()
+                .sorted(
+                        (Person a, Person b) -> a.birth.compareTo(b.birth))
+                .collect(Collectors.toList());
+    }
+
+    public static List<Person> selectDeceased(List<Person> from) {
+        return from.stream()
+                .filter(p -> p.death != null)
+                .sorted(Comparator.comparingLong(
+                        a -> ChronoUnit.DAYS.between(a.death, a.birth)))
+                .toList();
+    }
+
+    public static Person selectOldestAlive(List<Person> from) {
+        return from.stream()
+                .filter(p -> p.death == null)
+                .min((a, b) -> a.birth.compareTo(b.birth))
+                .orElse(null);
     }
 }

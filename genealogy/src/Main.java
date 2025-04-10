@@ -2,18 +2,12 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Function;
 
 public class Main {
     public static void main(String[] args) {
         PlantUMLRunner.setJarPath("/home/student/Pobrane/plantuml-1.2025.2.jar");
-        String umlData = "Alice -> Bob : test";
         try {
-            PlantUMLRunner.generateDiagram(umlData, "/home/student/Pobrane", "diagram.png");
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
-        /*try {
             List<Person> personList = Person.fromCsv("family.csv");
 
             Person.toBinaryFile(personList, "family.bin");
@@ -27,9 +21,24 @@ public class Main {
                     System.out.println("\t"+child.getFullName());
                 }
             }
-        } catch (AmbiguousPersonException e) {
+
+            String umlData = Person.umlFromList(
+                    family,
+                    uml -> uml.replaceFirst("\\{", "#yellow {"),
+                    p -> Person.selectDeceased(family).contains(p) || Person.selectOldestAlive(family) == p
+                    //Function.identity()
+            );
+            System.out.println(umlData);
+            PlantUMLRunner.generateDiagram(umlData, "/home/student/Pobrane", "diagram.png");
+
+            System.out.println(Person.selectNames(family, "dąb"));
+            System.out.println(Person.sortByBirth(family));
+            System.out.println(Person.selectDeceased(family));
+            System.out.println(Person.selectOldestAlive(family));
+        }
+        catch (Exception e) {
             System.err.println(e.getMessage());
-        }*/
+        }
     }
 }
 
