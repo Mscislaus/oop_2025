@@ -1,10 +1,19 @@
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
+        PlantUMLRunner.setJarPath("/home/student/Pobrane/plantuml-1.2025.2.jar");
+        String umlData = "Alice -> Bob : test";
         try {
+            PlantUMLRunner.generateDiagram(umlData, "/home/student/Pobrane", "diagram.png");
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        /*try {
             List<Person> personList = Person.fromCsv("family.csv");
 
             Person.toBinaryFile(personList, "family.bin");
@@ -20,7 +29,7 @@ public class Main {
             }
         } catch (AmbiguousPersonException e) {
             System.err.println(e.getMessage());
-        }
+        }*/
     }
 }
 
