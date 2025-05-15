@@ -7,7 +7,8 @@ public class DigitalClock extends Clock {
 
     private Mode mode;
 
-    public DigitalClock(Mode mode) {
+    public DigitalClock(City city, Mode mode) {
+        super(city);
         this.mode = mode;
     }
 
