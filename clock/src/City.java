@@ -21,6 +21,10 @@ public class City {
         return capital;
     }
 
+    public int getTimeZone() {
+        return timeZone;
+    }
+
     private static City parseLine(String line) {
         String[] parts = line.split(",");
 
