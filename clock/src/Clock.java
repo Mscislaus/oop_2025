@@ -1,7 +1,7 @@
 import java.time.LocalTime;
 
 public abstract class Clock {
-    private LocalTime time;
+    protected LocalTime time;
 
     public void setCurrentTime() {
         this.time = LocalTime.now();
