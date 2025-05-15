@@ -1,3 +1,5 @@
+import java.util.Map;
+
 public class Main {
     public static void main(String[] args) {
         DigitalClock clock24 = new DigitalClock(DigitalClock.Mode.H24);
@@ -15,5 +17,11 @@ public class Main {
         DigitalClock currentClock12 = new DigitalClock(DigitalClock.Mode.H12);
         currentClock12.setCurrentTime();
         System.out.println("Zegar bieżący (12h): " + currentClock12);
+
+        Map<String, City> cities = City.parseFile("strefy.csv");
+        City warsaw = cities.get("Warszawa");
+        if (warsaw != null) {
+            System.out.println(warsaw);
+        }
     }
 }
